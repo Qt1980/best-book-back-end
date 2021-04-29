@@ -1,6 +1,8 @@
+'use strict'; 
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+// const user = require('user');
 
 require('dotenv').config();
 
@@ -8,18 +10,19 @@ require('dotenv').config();
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // I'm intentioanlly requiring this model After I run mongoose.connect
-const Book = require('./models/Book');
+const User = require('./models/User');
 
 // see the database with some books, so I can retrieve them
-const myBook = new Book({
-  name: 'Bram Stokers Dracula',
-  genre: 'Horror',
-  isFiction: true,
-  // favoriteActivities: [
-  //     { activityName: 'playing with a ball of yarn' },
-  //     { activityName: 'sleeping' },
-  //     { activityName: 'zoomies' },
-  // ]
+const newUser = new User({
+  name: 'Mark Cuban',
+  email: 'mcuban@pooperscoop.com',
+  books: [{
+    name:`I'm Rich Get Over It!`,
+    description:`How to get rich by a billionaire`,
+    status: `Read, Not!`,
+    genre: `Horror`,
+    isFiction: true
+  }]
 });
 
 // myBook.save(function (err) {
@@ -27,20 +30,25 @@ const myBook = new Book({
 //   else console.log('saved the book');
 // });
 
+
+app.get('/User', (req, res) => {
+  res.send('name', 'email');
+});
+
 app.get('/', (req, res) => {
   res.send('My booklist!');
 });
 
 app.get('/books', (req, res) => {
   // get all the cats from the database
-  Book.find((err, databaseResults) => {
+  newUser.find((err, databaseResults) => {
   // send them in my response
     res.send(databaseResults);
   });
 });
 // route to get just one cat
 app.get('/book', (req, res) => {
-  Book.find({ name: req.query.name }, (err, databaseResults) => {
+  newUser.find({ name: req.query.name }, (err, databaseResults) => {
     // sent them in my response
     res.send(databaseResults);
   });

@@ -10,14 +10,14 @@ require('dotenv').config();
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // I'm intentioanlly requiring this model After I run mongoose.connect
-const User = require('./models/User');
+const {User, Book} = require('./models/User');
 
 // see the database with some books, so I can retrieve them
 const newUser = new User({
   name: 'Mark Cuban',
   email: 'mcuban@pooperscoop.com',
   books: [{
-    name:`I'm Rich Get Over It!`,
+    bookName:`I'm Rich Get Over It!`,
     description:`How to get rich by a billionaire`,
     status: `Read, Not!`,
     genre: `Horror`,
@@ -25,30 +25,39 @@ const newUser = new User({
   }]
 });
 
-// myBook.save(function (err) {
-//   if (err) console.err(err);
-//   else console.log('saved the book');
-// });
+const myBook = new Book({bookName: 'Fight Club', description: 'awesom', status: 'read', genre: 'wellness', isFiction: true});
 
 
-app.get('/User', (req, res) => {
-  res.send('name', 'email');
+
+myBook.save(function (err) {
+  if (err) console.err(err);
+  else console.log('saved the book');
 });
+
+newUser.save(function (err) {
+  if (err) console.err(err);
+  else console.log('user saved');
+});
+
+
+// app.get('/User', (req, res) => {
+//   res.send('name', 'email');
+// });
 
 app.get('/', (req, res) => {
   res.send('My booklist!');
 });
 
-app.get('/books', (req, res) => {
+app.get('/book', (req, res) => {
   // get all the cats from the database
-  newUser.find((err, databaseResults) => {
+  Book.find((err, databaseResults) => {
   // send them in my response
     res.send(databaseResults);
   });
 });
 // route to get just one cat
-app.get('/book', (req, res) => {
-  newUser.find({ name: req.query.name }, (err, databaseResults) => {
+app.get('/user', (req, res) => {
+  User.find({ name: req.query.name }, (err, databaseResults) => {
     // sent them in my response
     res.send(databaseResults);
   });

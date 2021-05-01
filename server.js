@@ -3,19 +3,26 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
+
+// make sure our app can handle post requests
+// specifically, make sure that on post requests, we can access the data in the request body
+app.use(express.json());
+
 // const user = require('user');
 
 // const PORT = process.env.PORT || 3001;
 
 require('dotenv').config();
 
+// Cors
+app.use(cors());
+
 // hey mongoose, connect to the database at localhost:27017
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/gifts', {useNewUrlParser: true, useUnifiedTopology: true});
 
 // I'm intentioanlly requiring this model After I run mongoose.connect
 const User = require('./models/User');
-
-
 
 // see the database with some books, so I can retrieve them
 
@@ -52,29 +59,68 @@ const User = require('./models/User');
 //   else console.log('user saved');
 // });
 
-// Cors
-app.use(cors());
-
 // app.get('/User', (req, res) => {
 //   res.send('name');
 // });
 
 app.get('/', (req, res) => {
-  res.send('My booklist!');
-});
-
-app.get('/book', (req, res) => {
-  console.log('book', req.query.user);
-  let user = req.query.user;
-  // get all the books from the database
-  // Book.find((err, databaseResults) => {
-  User.find({userEmail: user}, (err, databaseResults) => {
-  // User.find({userEmail: user}, (err, databaseResults) => {
-  // send them in my response
-    res.send(databaseResults[0].favoriteBooks);
-    // res.send(databaseResults);
+  Users.find((err, userData) => {
+    res.send(userData);
   });
 });
+// colon at the start of :email makes it a parameter
+app.get('/users/:userEmail', (req, res) => {
+  Users.find({userEmail: req.params.userEmail}, (err, userData) => {
+    res.send(userData);
+  });
+});
+
+app.post('/books', (req, res) => {
+  // for post requests, data is inside of the body
+  // as long as we have the app.use(express.json()) line at the top of the file
+
+  // console.log('book', req.query.user);
+  console.log(req.body);
+  // let user = req.query.user;
+  // get all the books from the database
+  // Book.find((err, databaseResults) => {
+
+   // find the relevant user in the database
+  User.find({userEmail: req.body.userEmail}, (err, userData) => {
+    if(userData.length < 1) {
+      res.status(400).send('user does not exist in database');
+    } else {
+      // add the new book info to that user
+      let user = userData[0];
+      user.favoriteBooks.push({
+        name: req.body.name,
+        description: req.body.description
+      });
+      // save the user
+      user.save().then( (userData) => {
+        console.log(userData);
+        res.send(userData.gifts);
+      });
+    }
+  });
+});
+
+app.delete('/books/:id', (req, res) => {
+  let email = req.query.user;
+  // find the user
+  User.find({userEmail: email}, (err, userData) => {
+    let user = userData[0];
+    // delete the book
+    console.log(user.books);
+    user.save().then(userData => {
+      res.send(userData.books);
+    });
+  });
+});
+
+  // send them in my response
+    // res.send(databaseResults[0].favoriteBooks);
+    // res.send(databaseResults);
 // route to get just one user from db
 // app.get('/user', (req, res) => {
 //   User.find({ name: req.query.name }, (err, databaseResults) => {

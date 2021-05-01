@@ -21,9 +21,9 @@ const User = require('./models/User');
 
 // const newUser = new User({
 //   name: 'Qadree Trimblr',
-//   email: 'qbt007@gmail.com',
-//   books: [{
-//     name:`Bram Stoker's Dracula`,
+//   userEmail: 'qbt007@gmail.com',
+//   favoriteBooks: [{
+//     bookName:`Bram Stoker's Dracula`,
 //     description:`A Story of Lovers`,
 //     status: `Read`,
 //     genre: `Horror`,
@@ -33,11 +33,11 @@ const User = require('./models/User');
 
 // newUser.save().then(() => console.log('user saved'));
 
-const myUser = new User({
-  // userName: 'Kevin',
-  userEmail: 'kevinhenry789@gmail.com',
-  favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
-});
+// const myUser = new User({
+//   // userName: 'Kevin',
+//   userEmail: 'kevinhenry789@gmail.com',
+//   favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
+// });
 
 
 // const myBook = new Book({bookName: 'Fight Club', description: 'awesom', status: 'read', genre: 'wellness', isFiction: true});
@@ -47,10 +47,10 @@ const myUser = new User({
 //   else console.log('saved the book');
 // });
 
-myUser.save(function (err) {
-  if (err) console.err(err);
-  else console.log('user saved');
-});
+// myUser.save(function (err) {
+//   if (err) console.err(err);
+//   else console.log('user saved');
+// });
 
 // Cors
 app.use(cors());
@@ -64,12 +64,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/book', (req, res) => {
-
-  // let user = req.query.user;
+  console.log('book', req.query.user);
+  let user = req.query.user;
   // get all the books from the database
   // Book.find((err, databaseResults) => {
-  User.find({userEmail: req.query.userEmail}, (err, databaseResults) => { 
-  // User.find({userEmail: user}, (err, databaseResults) => { 
+  User.find({userEmail: user}, (err, databaseResults) => {
+  // User.find({userEmail: user}, (err, databaseResults) => {
   // send them in my response
     res.send(databaseResults[0].favoriteBooks);
     // res.send(databaseResults);

@@ -14,17 +14,18 @@ const User = require('./models/User');
 
 // see the database with some books, so I can retrieve them
 const newUser = new User({
-  name: 'Mark Cuban',
-  email: 'mcuban@pooperscoop.com',
+  name: 'Qadree Trimblr',
+  email: 'qbt007@gmail.com',
   books: [{
-    name:`I'm Rich Get Over It!`,
-    description:`How to get rich by a billionaire`,
-    status: `Read, Not!`,
+    name:`Bram Stoker's Dracula`,
+    description:`A Story of Lovers`,
+    status: `Read`,
     genre: `Horror`,
     isFiction: true
   }]
 });
 
+// newUser.save().then(() => console.log('user saved'));
 // myBook.save(function (err) {
 //   if (err) console.err(err);
 //   else console.log('saved the book');

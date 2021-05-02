@@ -23,7 +23,8 @@ const bookSchema = new Schema({
 const userSchema = new Schema ({
   userName: {type: String},
   userEmail: {type: String},
-  favoriteBooks: [bookSchema],
+  books: [bookSchema],
+  // favoriteBooks: [bookSchema],
 });
 
 const User = mongoose.model('User', userSchema);

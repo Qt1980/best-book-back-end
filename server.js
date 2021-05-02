@@ -95,7 +95,8 @@ app.post('/books', (req, res) => {
     } else {
       // add the new book info to that user
       let user = userData[0];
-      user.favoriteBooks.push({
+      user.books.push({
+      // user.favoriteBooks.push({
         name: req.body.name,
         description: req.body.description,
         status: req.body.status

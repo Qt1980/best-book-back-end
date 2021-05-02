@@ -18,11 +18,13 @@ require('dotenv').config();
 app.use(cors());
 
 // hey mongoose, connect to the database at localhost:27017
-// mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect('mongodb://localhost:27017/gifts', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/books', {useNewUrlParser: true, useUnifiedTopology: true});
 
 // I'm intentioanlly requiring this model After I run mongoose.connect
 const User = require('./models/User');
+const Books = require('./models/Books');
+const { request, response } = require('express');
 
 // see the database with some books, so I can retrieve them
 
@@ -64,13 +66,14 @@ const User = require('./models/User');
 // });
 
 app.get('/', (req, res) => {
-  Users.find((err, userData) => {
+  User.find((err, userData) => {
     res.send(userData);
   });
 });
 // colon at the start of :email makes it a parameter
-app.get('/users/:userEmail', (req, res) => {
-  Users.find({userEmail: req.params.userEmail}, (err, userData) => {
+app.get('/user/:userEmail', (req, res) => {
+// app.get('/user/:userEmail', (req, res) => {
+  User.find({userEmail: req.params.email}, (err, userData) => {
     res.send(userData);
   });
 });
@@ -86,7 +89,7 @@ app.post('/books', (req, res) => {
   // Book.find((err, databaseResults) => {
 
    // find the relevant user in the database
-  User.find({userEmail: req.body.userEmail}, (err, userData) => {
+  User.find({userEmail: req.body.email}, (err, userData) => {
     if(userData.length < 1) {
       res.status(400).send('user does not exist in database');
     } else {
@@ -94,12 +97,16 @@ app.post('/books', (req, res) => {
       let user = userData[0];
       user.favoriteBooks.push({
         name: req.body.name,
-        description: req.body.description
+        description: req.body.description,
+        status: req.body.status
       });
       // save the user
       user.save().then( (userData) => {
         console.log(userData);
-        res.send(userData.gifts);
+        res.send(userData.books);
+      })
+        .catch(err => {
+        res.status(500).send(err);
       });
     }
   });
@@ -111,6 +118,8 @@ app.delete('/books/:id', (req, res) => {
   User.find({userEmail: email}, (err, userData) => {
     let user = userData[0];
     // delete the book
+    user.books = user.books.filter(book => `${book._id}` !== req.params.id);
+    // save the user
     console.log(user.books);
     user.save().then(userData => {
       res.send(userData.books);

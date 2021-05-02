@@ -9,4 +9,9 @@ const bookSchema = new mongoose.Schema({
   bookStatus: {type: Boolean},
 });
 
-module.exports = mongoose.model('Books');
+const newPerson = new mongoose.Schema({
+  email: {type: String, required: true},
+  books: [bookSchema]
+});
+
+module.exports = mongoose.model('Books', newPerson);

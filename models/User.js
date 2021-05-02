@@ -1,3 +1,4 @@
+'use strict'
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
@@ -20,9 +21,10 @@ const bookSchema = new Schema({
 // userSchema includes our bookSchema
 // user is an object that contains an array of book objects
 const userSchema = new Schema ({
-  // userName: {type: String},
+  userName: {type: String},
   userEmail: {type: String},
-  favoriteBooks: [bookSchema],
+  books: [bookSchema],
+  // favoriteBooks: [bookSchema],
 });
 
 const User = mongoose.model('User', userSchema);

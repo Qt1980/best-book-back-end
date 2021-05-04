@@ -28,25 +28,25 @@ const { request, response } = require('express');
 
 // see the database with some books, so I can retrieve them
 
-const newUser = new User({
-  name: 'Qadree Trimblr',
-  email: 'qbt007@gmail.com',
-  favoriteBooks: [{
-    bookName:`Bram Stoker's Dracula`,
-    description:`A Story of Lovers`,
-    status: `Read`,
-    genre: `Horror`,
-    isFiction: true
-  }]
-});
+// const newUser = new User({
+//   name: 'Qadree Trimblr',
+//   email: 'qbt007@gmail.com',
+//   favoriteBooks: [{
+//     bookName:`Bram Stoker's Dracula`,
+//     description:`A Story of Lovers`,
+//     status: `Read`,
+//     genre: `Horror`,
+//     isFiction: true
+//   }]
+// });
 
-newUser.save().then(() => console.log('user saved'));
+// newUser.save().then(() => console.log('user saved'));
 
-const myUser = new User({
-  // userName: 'Kevin',
-  email: 'kevinhenry789@gmail.com',
-  favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
-});
+// const myUser = new User({
+//   // userName: 'Kevin',
+//   email: 'kevinhenry789@gmail.com',
+//   favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
+// });
 
 // const myBook = new Book({bookName: 'Fight Club', description: 'awesom', status: 'read', genre: 'wellness', isFiction: true});
 
@@ -55,10 +55,10 @@ const myUser = new User({
 //   else console.log('saved the book');
 // });
 
-myUser.save(function (err) {
-  if (err) console.err(err);
-  else console.log('user saved');
-});
+// myUser.save(function (err) {
+//   if (err) console.err(err);
+//   else console.log('user saved');
+// });
 
 // app.get('/User', (req, res) => {
 //   res.send('name');
@@ -96,9 +96,9 @@ app.post('/books', (req, res) => {
       let user = userData[0];
       user.books.push({
       // user.favoriteBooks.push({
-        name: req.body.name,
-        description: req.body.description,
-        status: req.body.status
+        bookName: req.body.name,
+        bookDescription: req.body.description,
+        bookStatus: req.body.status
       });
       // save the user
       user.save().then( (userData) => {
@@ -114,11 +114,14 @@ app.post('/books', (req, res) => {
 
 app.delete('/books/:id', (req, res) => {
   let email = req.query.user;
+  console.log(req.query);
+  console.log('email', email)
   // find the user
-  User.find({email: email}, (err, userData) => {
-    let user = userData[0];
+  User.findOne({email: email}, (err, userData) => {
+    let user = userData;
+    console.log('user', user);
     // delete the book
-    user.books = user.books.filter(book => `${book._id}` !== req.params.id);
+    user.books = user.books.filter(book => book._id !== req.params.id);
     // save the user
     console.log(user.books);
     user.save().then(userData => {

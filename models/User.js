@@ -22,7 +22,7 @@ const bookSchema = new Schema({
 // user is an object that contains an array of book objects
 const userSchema = new Schema ({
   userName: {type: String},
-  userEmail: {type: String},
+  email: {type: String},
   books: [bookSchema],
   // favoriteBooks: [bookSchema],
 });

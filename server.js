@@ -28,26 +28,25 @@ const { request, response } = require('express');
 
 // see the database with some books, so I can retrieve them
 
-// const newUser = new User({
-//   name: 'Qadree Trimblr',
-//   userEmail: 'qbt007@gmail.com',
-//   favoriteBooks: [{
-//     bookName:`Bram Stoker's Dracula`,
-//     description:`A Story of Lovers`,
-//     status: `Read`,
-//     genre: `Horror`,
-//     isFiction: true
-//   }]
-// });
+const newUser = new User({
+  name: 'Qadree Trimblr',
+  email: 'qbt007@gmail.com',
+  favoriteBooks: [{
+    bookName:`Bram Stoker's Dracula`,
+    description:`A Story of Lovers`,
+    status: `Read`,
+    genre: `Horror`,
+    isFiction: true
+  }]
+});
 
-// newUser.save().then(() => console.log('user saved'));
+newUser.save().then(() => console.log('user saved'));
 
-// const myUser = new User({
-//   // userName: 'Kevin',
-//   userEmail: 'kevinhenry789@gmail.com',
-//   favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
-// });
-
+const myUser = new User({
+  // userName: 'Kevin',
+  email: 'kevinhenry789@gmail.com',
+  favoriteBooks: [{ bookName: 'I\'m Rich Get Over It!'}, {bookName: 'Fight Club'}, {bookName: 'Blackhawk Down'}, {bookName: 'Extreme Ownership'}],
+});
 
 // const myBook = new Book({bookName: 'Fight Club', description: 'awesom', status: 'read', genre: 'wellness', isFiction: true});
 
@@ -56,10 +55,10 @@ const { request, response } = require('express');
 //   else console.log('saved the book');
 // });
 
-// myUser.save(function (err) {
-//   if (err) console.err(err);
-//   else console.log('user saved');
-// });
+myUser.save(function (err) {
+  if (err) console.err(err);
+  else console.log('user saved');
+});
 
 // app.get('/User', (req, res) => {
 //   res.send('name');
@@ -71,9 +70,9 @@ app.get('/', (req, res) => {
   });
 });
 // colon at the start of :email makes it a parameter
-app.get('/user/:userEmail', (req, res) => {
-// app.get('/user/:userEmail', (req, res) => {
-  User.find({userEmail: req.params.email}, (err, userData) => {
+app.get('/user/:email', (req, res) => {
+// app.get('/user/:email', (req, res) => {
+  User.find({email: req.params.email}, (err, userData) => {
     res.send(userData);
   });
 });
@@ -89,7 +88,7 @@ app.post('/books', (req, res) => {
   // Book.find((err, databaseResults) => {
 
    // find the relevant user in the database
-  User.find({userEmail: req.body.email}, (err, userData) => {
+  User.find({email: req.body.email}, (err, userData) => {
     if(userData.length < 1) {
       res.status(400).send('user does not exist in database');
     } else {
@@ -116,7 +115,7 @@ app.post('/books', (req, res) => {
 app.delete('/books/:id', (req, res) => {
   let email = req.query.user;
   // find the user
-  User.find({userEmail: email}, (err, userData) => {
+  User.find({email: email}, (err, userData) => {
     let user = userData[0];
     // delete the book
     user.books = user.books.filter(book => `${book._id}` !== req.params.id);

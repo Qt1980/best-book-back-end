@@ -20,12 +20,16 @@ app.use(cors());
 // hey mongoose, connect to the database at localhost:27017
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 // mongoose.connect('mongodb://localhost:27017/books', {useNewUrlParser: true, useUnifiedTopology: true});
+// const db = mongoose.connection
 
 // I'm intentioanlly requiring this model After I run mongoose.connect
 const User = require('./models/User');
 const Books = require('./models/Books');
 const { request, response } = require('express');
+const { db } = require('./models/User');
 
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('Connected to Database'))
 // see the database with some books, so I can retrieve them
 
 // const newUser = new User({
@@ -69,6 +73,7 @@ app.get('/', (req, res) => {
     res.send(userData);
   });
 });
+
 // colon at the start of :email makes it a parameter
 app.get('/user/:email', (req, res) => {
 // app.get('/user/:email', (req, res) => {
@@ -112,16 +117,44 @@ app.post('/books', (req, res) => {
   });
 });
 
+// best practice: use body for non-GET requests
+//     use query for GET requests
+
+//              this :id thing is req.params
+app.put('/books/:id', (req, res) => {
+  // find the user
+  let email = req.body.user;
+  Users.find({email: email}, (err, userData) => {
+    // update the book
+    let bookId = req.params.id;
+    let user = userData[0];
+    user.books.forEach(book => {
+      if(`${book._id}` === bookId) {
+        // we found the correct book! update it
+        book.bookName = req.body.name;
+        book.bookDescription = req.body.description;
+      }
+    });
+    // save the updated user/book
+    user.save().then(savedUserData => {
+      // send back the new data
+      res.send(savedUserData.books);
+    });
+  });
+});
+
 app.delete('/books/:id', (req, res) => {
   let email = req.query.user;
   console.log(req.query);
   console.log('email', email)
   // find the user
-  User.findOne({email: email}, (err, userData) => {
-    let user = userData;
+  User.find({email: email}, (err, userData) => {
+  // User.findOne({email: email}, (err, userData) => {
+    let user = userData[0];
+    // let user = userData;
     console.log('user', user);
     // delete the book
-    user.books = user.books.filter(book => book._id !== req.params.id);
+    user.books = user.books.filter(book => `${book._id}` !== req.params.id);
     // save the user
     console.log(user.books);
     user.save().then(userData => {
